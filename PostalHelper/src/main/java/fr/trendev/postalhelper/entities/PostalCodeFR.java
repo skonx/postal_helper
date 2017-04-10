@@ -29,6 +29,9 @@ public class PostalCodeFR {
     @Basic
     private String town;
 
+    @Basic
+    private String gpsCoords;
+
 
     public Long getId() {
         return this.id;
@@ -52,6 +55,14 @@ public class PostalCodeFR {
 
     public void setTown(String town) {
         this.town = town;
+    }
+
+    public String getGpsCoords() {
+        return this.gpsCoords;
+    }
+
+    public void setGpsCoords(String gpsCoords) {
+        this.gpsCoords = gpsCoords;
     }
 
 

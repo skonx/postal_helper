@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<jpa:entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:java="http://jcp.org/en/jsr/detail?id=270" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jpa="http://java.sun.com/xml/ns/persistence/orm" pkg="fr.trendev.postalhelper.entities" v="3.6" rws="_149184593653895" cws="_149184593653895" sm="false" xs="false" id="_149184593653894" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd">
+<jpa:entity-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:java="http://jcp.org/en/jsr/detail?id=270" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jpa="http://java.sun.com/xml/ns/persistence/orm" pkg="fr.trendev.postalhelper.entities" v="3.6" rws="_149184593653895" Pws="_149184593653895" cws="_149184593653895" sm="false" xs="false" id="_149184593653894" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_2_1.xsd">
     <jpa:entity lbl-ref="_149184596045696" xre="false" compositePrimaryKeyClass="PostalCodeFRPK" abs="false" class="PostalCodeFR" v="true" m="false" rootElement="_149184593653894" id="_1491845960454">
         <jpa:ts e="true"/>
         <jpa:hc e="true"/>
@@ -10,6 +10,9 @@
                 <jpa:bv/>
             </jpa:basic>
             <jpa:basic attribute-type="String" v="true" name="town" id="_1491846019702102">
+                <jpa:bv/>
+            </jpa:basic>
+            <jpa:basic attribute-type="String" v="true" name="gpsCoords" id="_1491847454150105">
                 <jpa:bv/>
             </jpa:basic>
             <jpa:id attribute-type="Long" v="true" name="id" id="_149184596045696">
@@ -25,6 +28,9 @@
         </jpa:nq>
         <jpa:nq e="false" name="PostalCodeFR.findByTown">
             <jpa:query>Select p from PostalCodeFR p where p.town=:town</jpa:query>
+        </jpa:nq>
+        <jpa:nq e="false" name="PostalCodeFR.findByGpsCoords">
+            <jpa:query>Select p from PostalCodeFR p where p.gpsCoords=:gpsCoords</jpa:query>
         </jpa:nq>
         <jpa:el/>
         <jpa:table name="POSTAL_CODE_FR"/>
