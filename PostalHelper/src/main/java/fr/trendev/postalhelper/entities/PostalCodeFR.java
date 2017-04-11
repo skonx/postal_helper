@@ -6,10 +6,10 @@ package fr.trendev.postalhelper.entities;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author jsie
@@ -17,29 +17,20 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="POSTAL_CODE_FR")
+@IdClass(PostalCodeFRPK.class)
 public class PostalCodeFR { 
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    private Long id;
-
-    @Basic
+    @NotNull
     private String code;
 
-    @Basic
+    @Id
+    @NotNull
     private String town;
 
     @Basic
     private String gpsCoords;
 
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getCode() {
         return this.code;
