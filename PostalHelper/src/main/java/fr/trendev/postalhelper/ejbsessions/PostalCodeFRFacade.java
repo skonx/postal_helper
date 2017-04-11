@@ -24,6 +24,14 @@ public class PostalCodeFRFacade {
     private static final Logger LOG = Logger.getLogger(PostalCodeFRFacade.class.
             getName());
 
+    /**
+     * Creates a PostalCodeFR
+     *
+     * @param code the postal code, must not be null
+     * @param town the name of the town, must not be null
+     * @param gpsCoords the GPS Coords, not used at the present time)
+     * @return the created PostalCodeFR
+     */
     public PostalCodeFR create(String code, String town,
             String gpsCoords) {
         PostalCodeFR pc = new PostalCodeFR();
@@ -33,6 +41,12 @@ public class PostalCodeFRFacade {
         return pc;
     }
 
+    /**
+     * Persists the provided PostalCodeFR. PostalCodeFR should not be already
+     * present in the DB.
+     *
+     * @param pc a postal code
+     */
     public void persist(PostalCodeFR pc) {
         em.persist(pc);
     }

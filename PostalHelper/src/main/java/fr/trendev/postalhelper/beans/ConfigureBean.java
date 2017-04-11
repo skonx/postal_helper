@@ -39,19 +39,32 @@ public class ConfigureBean {
     @EJB
     private PostalCodeFRFacade facade;
 
+    /**
+     * Will store the collected postal codes into the DB
+     */
     @PostConstruct
     public void init() {
-        getPostalCodes().forEach(facade::persist);
+        //will persiste each PostalCode
+        getPostalCodes(";").forEach(facade::persist);
     }
 
-    private Set<PostalCodeFR> getPostalCodes() {
-        Pattern pattern = Pattern.compile(";");
+    /**
+     * Will collect the postal codes from a ref CSV file and create a TreeSet
+     * with unique postal code / town association.
+     *
+     * @param delim usually, a semicolon
+     * @return the collected postal codes
+     */
+    private Set<PostalCodeFR> getPostalCodes(String delim) {
+        Pattern pattern = Pattern.compile(delim);
         String csvFile = path + file;
 
+        //this structure will be used to remove duplicated postal codes
         Set<PostalCodeFR> set = new TreeSet<>(Comparator.comparing(
                 PostalCodeFR::getCode).thenComparing(PostalCodeFR::getTown));
 
         try (BufferedReader in = new BufferedReader(new FileReader(csvFile))) {
+            //skip the first line (header) and map new PostalCodeFR into a Set
             set.addAll(in.lines().skip(1).map(l -> {
                 String[] values = pattern.split(l);
 
@@ -68,6 +81,7 @@ public class ConfigureBean {
                                         (values.length == 6) ? values[5] : null);
                     } else {
                         LOG.log(Level.WARNING, "Cannot treat line : {0}", l);
+                        //null is added but will be filtered later
                         return null;
                     }
                 }
