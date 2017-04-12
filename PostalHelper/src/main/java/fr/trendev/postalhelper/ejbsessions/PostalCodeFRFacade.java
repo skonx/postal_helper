@@ -90,6 +90,8 @@ public class PostalCodeFRFacade {
         Root<PostalCodeFR> root = cq.from(PostalCodeFR.class);
         cq.select(root).where(cb.like(root.get(PostalCodeFR_.town), "%" + town
                 + "%"));
+        cq.orderBy(cb.asc(root.get(PostalCodeFR_.town)), cb.asc(root.get(
+                PostalCodeFR_.code)));
         Query q = em.createQuery(cq);
         return q.getResultList();
     }
@@ -102,6 +104,8 @@ public class PostalCodeFRFacade {
         CriteriaQuery<PostalCodeFR> cq = cb.createQuery(PostalCodeFR.class);
         Root<PostalCodeFR> root = cq.from(PostalCodeFR.class);
         cq.select(root).where(cb.equal(root.get(PostalCodeFR_.code), code));
+        cq.orderBy(cb.asc(root.get(PostalCodeFR_.code)), cb.asc(root.get(
+                PostalCodeFR_.town)));
         Query q = em.createQuery(cq);
         return q.getResultList();
     }
@@ -114,6 +118,8 @@ public class PostalCodeFRFacade {
         CriteriaQuery<PostalCodeFR> cq = cb.createQuery(PostalCodeFR.class);
         Root<PostalCodeFR> root = cq.from(PostalCodeFR.class);
         cq.select(root).where(cb.like(root.get(PostalCodeFR_.code), code + "%"));
+        cq.orderBy(cb.asc(root.get(PostalCodeFR_.code)), cb.asc(root.get(
+                PostalCodeFR_.town)));
         Query q = em.createQuery(cq);
         return q.getResultList();
     }
