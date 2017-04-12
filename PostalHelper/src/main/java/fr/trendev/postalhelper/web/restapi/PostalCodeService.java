@@ -7,7 +7,9 @@ package fr.trendev.postalhelper.web.restapi;
 
 import fr.trendev.postalhelper.ejbsessions.PostalCodeFRFacade;
 import fr.trendev.postalhelper.entities.PostalCodeFR;
+import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -38,6 +40,11 @@ public class PostalCodeService {
     @Produces(MediaType.APPLICATION_JSON)
     public List<PostalCodeFR> findFromCode(
             @PathParam("code") String code) {
+
+        if (code.length() > 5) {
+            LOG.log(Level.WARNING, "The code provided is too long...");
+            return Collections.emptyList();
+        }
 
         if (code.length() == POSTALCODE_LENGTH) {
             return facade.findFromCode(code);
