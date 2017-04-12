@@ -17,7 +17,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -42,7 +41,7 @@ public class ConfigureBean {
     /**
      * Will store the collected postal codes into the DB
      */
-    @PostConstruct
+    //@PostConstruct
     public void init() {
         //will persiste each PostalCode
         getPostalCodes(";").forEach(facade::persist);

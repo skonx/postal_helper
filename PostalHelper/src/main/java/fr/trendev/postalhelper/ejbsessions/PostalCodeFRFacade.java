@@ -6,10 +6,14 @@
 package fr.trendev.postalhelper.ejbsessions;
 
 import fr.trendev.postalhelper.entities.PostalCodeFR;
+import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaQuery;
 
 /**
  *
@@ -50,4 +54,49 @@ public class PostalCodeFRFacade {
     public void persist(PostalCodeFR pc) {
         em.persist(pc);
     }
+
+    public List<PostalCodeFR> findAll() {
+        LOG.log(Level.INFO,
+                "Providing all postal codes");
+        CriteriaQuery cq = em.
+                getCriteriaBuilder().createQuery();
+        cq.select(cq.from(PostalCodeFR.class));
+        return em.createQuery(cq).getResultList();
+    }
+
+    public String count() {
+
+        CriteriaQuery cq = em.
+                getCriteriaBuilder().createQuery();
+        cq.select(em.getCriteriaBuilder().count(cq.from(PostalCodeFR.class)));
+        Query q = em.createQuery(cq);
+
+        Long count = ((Long) q.getSingleResult());
+        LOG.log(Level.INFO,
+                "Providing the total count of postal codes : {0} postal codes in the DB",
+                count);
+        return count.toString();
+    }
+
+    public List<PostalCodeFR> findFromTown(String town) {
+        LOG.log(Level.INFO,
+                "Providing informations from town(s) containing the word [{0}]",
+                town);
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public List<PostalCodeFR> findFromCode(String code) {
+        LOG.log(Level.INFO,
+                "Providing informations from code [{0}]",
+                code);
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public List<PostalCodeFR> findFromPartialCode(String code) {
+        LOG.log(Level.INFO,
+                "Providing informations from partial code [{0}]",
+                code);
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

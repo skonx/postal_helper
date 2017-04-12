@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @author jsie
@@ -18,6 +19,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name="POSTAL_CODE_FR")
 @IdClass(PostalCodeFRPK.class)
+@XmlRootElement
 public class PostalCodeFR { 
 
     @Id
