@@ -85,7 +85,13 @@ public class PostalCodeFRFacade {
         LOG.log(Level.INFO,
                 "Providing informations from town(s) containing the word [{0}]",
                 town);
-        return null;
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<PostalCodeFR> cq = cb.createQuery(PostalCodeFR.class);
+        Root<PostalCodeFR> root = cq.from(PostalCodeFR.class);
+        cq.select(root).where(cb.like(root.get(PostalCodeFR_.town), "%" + town
+                + "%"));
+        Query q = em.createQuery(cq);
+        return q.getResultList();
     }
 
     public List<PostalCodeFR> findFromCode(String code) {
