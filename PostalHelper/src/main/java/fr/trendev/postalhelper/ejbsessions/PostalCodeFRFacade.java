@@ -6,6 +6,7 @@
 package fr.trendev.postalhelper.ejbsessions;
 
 import fr.trendev.postalhelper.entities.PostalCodeFR;
+import fr.trendev.postalhelper.entities.PostalCodeFR_;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,7 +14,9 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 /**
  *
@@ -82,21 +85,26 @@ public class PostalCodeFRFacade {
         LOG.log(Level.INFO,
                 "Providing informations from town(s) containing the word [{0}]",
                 town);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return null;
     }
 
     public List<PostalCodeFR> findFromCode(String code) {
         LOG.log(Level.INFO,
                 "Providing informations from code [{0}]",
                 code);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<PostalCodeFR> cq = cb.createQuery(PostalCodeFR.class);
+        Root<PostalCodeFR> root = cq.from(PostalCodeFR.class);
+        cq.select(root).where(cb.equal(root.get(PostalCodeFR_.code), code));
+        Query q = em.createQuery(cq);
+        return q.getResultList();
     }
 
     public List<PostalCodeFR> findFromPartialCode(String code) {
         LOG.log(Level.INFO,
                 "Providing informations from partial code [{0}]",
                 code);
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return null;
     }
 
 }
