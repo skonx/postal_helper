@@ -83,9 +83,20 @@ public class PostalCodeService {
     @GET
     @Path("town/{town}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PostalCodeFR> findFromTown(
+    public Response findFromTown(
             @PathParam("town") String town) {
-        return facade.findFromTown(town);
+
+        List<PostalCodeFR> list = facade.findFromTown(town);
+        if (list.isEmpty()) {
+            return sendNotFoundResponse("town", town);
+        }
+
+        GenericEntity<List<PostalCodeFR>> entity = new GenericEntity<List<PostalCodeFR>>(
+                list) {
+        };
+        return Response.status(Status.OK)
+                .entity(entity)
+                .build();
     }
 
     @GET

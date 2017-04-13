@@ -61,9 +61,12 @@ public class PostalCodeFRFacade {
     public List<PostalCodeFR> findAll() {
         LOG.log(Level.INFO,
                 "Providing all postal codes");
-        CriteriaQuery cq = em.
-                getCriteriaBuilder().createQuery();
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<PostalCodeFR> cq = cb.createQuery(PostalCodeFR.class);
+        Root<PostalCodeFR> root = cq.from(PostalCodeFR.class);
         cq.select(cq.from(PostalCodeFR.class));
+        cq.orderBy(cb.asc(root.get(PostalCodeFR_.code)), cb.asc(root.get(
+                PostalCodeFR_.town)));
         return em.createQuery(cq).getResultList();
     }
 
