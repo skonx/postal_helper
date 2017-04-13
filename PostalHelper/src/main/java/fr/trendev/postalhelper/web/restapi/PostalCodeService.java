@@ -15,7 +15,9 @@ import javax.ejb.Stateless;
 import javax.json.Json;
 import javax.json.JsonBuilderFactory;
 import javax.json.JsonObjectBuilder;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -56,7 +58,7 @@ public class PostalCodeService {
             @PathParam("code") String code) {
 
         if (code.length() > 5) {
-            LOG.log(Level.WARNING, "The provided code is too long...");
+            LOG.log(Level.WARNING, "The code is too long...");
             return sendNotFoundResponse("code", code);
         }
 
@@ -110,5 +112,12 @@ public class PostalCodeService {
     @Produces(MediaType.TEXT_PLAIN)
     public String count() {
         return String.valueOf(facade.count());
+    }
+
+    @POST
+    @Path("add")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void add(PostalCodeFR entity) {
+        facade.persist(entity);
     }
 }
