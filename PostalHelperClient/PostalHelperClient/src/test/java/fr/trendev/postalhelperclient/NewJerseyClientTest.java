@@ -17,6 +17,8 @@ import org.junit.Test;
  */
 public class NewJerseyClientTest {
 
+    private final static String EXPECTED_COUNT = "39200";
+
     public NewJerseyClientTest() {
     }
 
@@ -61,6 +63,8 @@ public class NewJerseyClientTest {
     public void testCount() {
         System.out.println("count");
         NewJerseyClient client = new NewJerseyClient();
+        String count = client.count();
+        assert EXPECTED_COUNT.equals(count);
         client.close();
     }
 
