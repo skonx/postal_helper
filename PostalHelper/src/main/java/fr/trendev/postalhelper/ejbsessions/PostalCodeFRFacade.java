@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -72,12 +72,12 @@ public class PostalCodeFRFacade {
 
     public String count() {
 
-        CriteriaQuery cq = em.
-                getCriteriaBuilder().createQuery();
+        CriteriaQuery<Long> cq = em.
+                getCriteriaBuilder().createQuery(Long.class);
         cq.select(em.getCriteriaBuilder().count(cq.from(PostalCodeFR.class)));
-        Query q = em.createQuery(cq);
+        TypedQuery<Long> q = em.createQuery(cq);
 
-        Long count = ((Long) q.getSingleResult());
+        Long count = q.getSingleResult();
         LOG.log(Level.INFO,
                 "Providing the total count of postal codes : {0} postal codes in the DB",
                 count);
@@ -95,7 +95,7 @@ public class PostalCodeFRFacade {
                 + "%"));
         cq.orderBy(cb.asc(root.get(PostalCodeFR_.town)), cb.asc(root.get(
                 PostalCodeFR_.code)));
-        Query q = em.createQuery(cq);
+        TypedQuery<PostalCodeFR> q = em.createQuery(cq);
         return q.getResultList();
     }
 
@@ -109,7 +109,7 @@ public class PostalCodeFRFacade {
         cq.select(root).where(cb.equal(root.get(PostalCodeFR_.code), code));
         cq.orderBy(cb.asc(root.get(PostalCodeFR_.code)), cb.asc(root.get(
                 PostalCodeFR_.town)));
-        Query q = em.createQuery(cq);
+        TypedQuery<PostalCodeFR> q = em.createQuery(cq);
         return q.getResultList();
     }
 
@@ -123,7 +123,7 @@ public class PostalCodeFRFacade {
         cq.select(root).where(cb.like(root.get(PostalCodeFR_.code), code + "%"));
         cq.orderBy(cb.asc(root.get(PostalCodeFR_.code)), cb.asc(root.get(
                 PostalCodeFR_.town)));
-        Query q = em.createQuery(cq);
+        TypedQuery<PostalCodeFR> q = em.createQuery(cq);
         return q.getResultList();
     }
 

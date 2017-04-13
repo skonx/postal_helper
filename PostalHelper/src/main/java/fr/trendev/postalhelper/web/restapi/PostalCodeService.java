@@ -118,6 +118,7 @@ public class PostalCodeService {
     @Path("add")
     @Consumes(MediaType.APPLICATION_JSON)
     public void add(PostalCodeFR entity) {
+        LOG.log(Level.INFO, "Adding a postal code : {0}", entity.getCode());
         facade.persist(entity);
     }
 }
