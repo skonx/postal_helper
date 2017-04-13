@@ -7,17 +7,22 @@ package fr.trendev.postalhelper.web.restapi;
 
 import fr.trendev.postalhelper.ejbsessions.PostalCodeFRFacade;
 import fr.trendev.postalhelper.entities.PostalCodeFR;
-import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.json.Json;
+import javax.json.JsonBuilderFactory;
+import javax.json.JsonObjectBuilder;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 /**
  *
@@ -35,26 +40,48 @@ public class PostalCodeService {
     private static final Logger LOG = Logger.getLogger(PostalCodeService.class.
             getName());
 
-    @GET
-    @Path("c/{code}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<PostalCodeFR> findFromCode(
-            @PathParam("code") String code) {
-
-        if (code.length() > 5) {
-            LOG.log(Level.WARNING, "The code provided is too long...");
-            return Collections.emptyList();
-        }
-
-        if (code.length() == POSTALCODE_LENGTH) {
-            return facade.findFromCode(code);
-        } else {
-            return facade.findFromPartialCode(code);
-        }
+    private Response sendNotFoundResponse(String path, String value) {
+        JsonBuilderFactory factory = Json.createBuilderFactory(null);
+        JsonObjectBuilder entity = factory.createObjectBuilder()
+                .add(path, value);
+        return Response.status(Status.NOT_FOUND)
+                .entity(entity.build())
+                .build();
     }
 
     @GET
-    @Path("t/{town}")
+    @Path("code/{code}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response findFromCode(
+            @PathParam("code") String code) {
+
+        if (code.length() > 5) {
+            LOG.log(Level.WARNING, "The provided code is too long...");
+            return sendNotFoundResponse("code", code);
+        }
+
+        List<PostalCodeFR> list;
+
+        if (code.length() == POSTALCODE_LENGTH) {
+            list = facade.findFromCode(code);
+        } else {
+            list = facade.findFromPartialCode(code);
+        }
+
+        if (list.isEmpty()) {
+            return sendNotFoundResponse("code", code);
+        }
+
+        GenericEntity<List<PostalCodeFR>> entity = new GenericEntity<List<PostalCodeFR>>(
+                list) {
+        };
+        return Response.status(Status.OK)
+                .entity(entity)
+                .build();
+    }
+
+    @GET
+    @Path("town/{town}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<PostalCodeFR> findFromTown(
             @PathParam("town") String town) {
