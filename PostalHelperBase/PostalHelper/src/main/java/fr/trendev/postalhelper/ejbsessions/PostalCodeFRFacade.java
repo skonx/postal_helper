@@ -58,7 +58,7 @@ public class PostalCodeFRFacade {
      */
     public void persist(PostalCodeFR pc) {
         em.persist(pc);
-        em.flush();
+        //em.flush();
     }
 
     public PostalCodeFR find(PostalCodeFR pc) {
@@ -135,6 +135,15 @@ public class PostalCodeFRFacade {
                 PostalCodeFR_.town)));
         TypedQuery<PostalCodeFR> q = em.createQuery(cq);
         return q.getResultList();
+    }
+
+    public void delete(PostalCodeFR pc) {
+        LOG.log(Level.INFO,
+                "Deleting postal code [{0};{1}]", new Object[]{pc.getCode(), pc.
+                    getTown()}
+        );
+        em.remove(pc);
+        //em.flush();
     }
 
 }

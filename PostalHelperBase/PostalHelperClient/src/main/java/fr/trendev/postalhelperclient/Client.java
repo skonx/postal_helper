@@ -12,23 +12,32 @@ import javax.ws.rs.core.Response;
  * Jersey REST client generated for REST resource:PostalCodeService [fr]<br>
  * USAGE:
  * <pre>
- *        NewJerseyClient client = new NewJerseyClient();
- *        Object response = client.XXX(...);
- *        // do whatever with response
- *        client.close();
+ * Client client = new Client();
+ * Object response = client.XXX(...);
+ * // do whatever with response
+ * client.close();
  * </pre>
  *
  * @author jsie
  */
-public class NewJerseyClient {
+public class Client {
 
     private javax.ws.rs.client.WebTarget webTarget;
     private javax.ws.rs.client.Client client;
     private static final String BASE_URI = "http://localhost:8080/PostalHelper/restapi";
 
-    public NewJerseyClient() {
+    public Client() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
         webTarget = client.target(BASE_URI).path("fr");
+    }
+
+    public <T> T delete(Class<T> responseType, String code) throws
+            javax.ws.rs.ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("del/{0}",
+                new Object[]{code}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).
+                delete(responseType);
     }
 
     public Response add(Object requestEntity) throws
@@ -48,11 +57,12 @@ public class NewJerseyClient {
                 get(responseType);
     }
 
-    public String count() throws javax.ws.rs.ClientErrorException {
+    public <T> T count(Class<T> responseType) throws
+            javax.ws.rs.ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path("count");
         return resource.request(javax.ws.rs.core.MediaType.TEXT_PLAIN).
-                get(String.class);
+                get(responseType);
     }
 
     public <T> T findFromTown(Class<T> responseType, String town) throws
