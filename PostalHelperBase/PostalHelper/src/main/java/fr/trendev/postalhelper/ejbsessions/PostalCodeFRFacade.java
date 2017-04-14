@@ -6,6 +6,7 @@
 package fr.trendev.postalhelper.ejbsessions;
 
 import fr.trendev.postalhelper.entities.PostalCodeFR;
+import fr.trendev.postalhelper.entities.PostalCodeFRPK;
 import fr.trendev.postalhelper.entities.PostalCodeFR_;
 import java.util.List;
 import java.util.logging.Level;
@@ -50,12 +51,21 @@ public class PostalCodeFRFacade {
 
     /**
      * Persists the provided PostalCodeFR. PostalCodeFR should not be already
-     * present in the DB.
+     * present in the DB, otherwise an exception is thrown and transaction is
+     * roll-backed.
      *
      * @param pc a postal code
      */
     public void persist(PostalCodeFR pc) {
         em.persist(pc);
+        em.flush();
+    }
+
+    public PostalCodeFR find(PostalCodeFR pc) {
+        PostalCodeFRPK key = new PostalCodeFRPK();
+        key.setCode(pc.getCode());
+        key.setTown(pc.getTown());
+        return em.find(PostalCodeFR.class, key);
     }
 
     public List<PostalCodeFR> findAll() {

@@ -12,6 +12,8 @@ import javax.json.JsonArray;
 import javax.json.JsonBuilderFactory;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -24,7 +26,7 @@ import org.junit.Test;
  */
 public class NewJerseyClientTest {
 
-    private final static String EXPECTED_COUNT = "39200";
+    private final static int EXPECTED_COUNT = 39200;
 
     public NewJerseyClientTest() {
     }
@@ -48,23 +50,41 @@ public class NewJerseyClientTest {
     /**
      * Test of add method, of class NewJerseyClient.
      */
-    //@Test
+    @Test
     public void testAdd() {
         System.out.println("add");
         NewJerseyClient client = new NewJerseyClient();
 
-        PostalCodeFR pc = new PostalCodeFR();
-        pc.setCode("99999");
-        pc.setTown("SOMEWHERE IN FRANCE " + System.currentTimeMillis());
-        pc.setGpsCoords("Latitude, Longitude");
+        for (int i = 0; i < 5; i++) {
 
-        JsonBuilderFactory factory = Json.createBuilderFactory(null);
-        JsonObjectBuilder pcJson = factory.createObjectBuilder()
-                .add("code", pc.getCode())
-                .add("town", pc.getTown())
-                .add("gpsCoords", pc.getGpsCoords());
+            PostalCodeFR pc = new PostalCodeFR();
+            pc.setCode("99999");
+            pc.setTown("TOWN_" + i + "_" + System.currentTimeMillis());
+            pc.setGpsCoords("Latitude, Longitude");
 
-        client.add(pcJson.build().toString());
+            JsonBuilderFactory factory = Json.createBuilderFactory(null);
+            JsonObjectBuilder pcJson = factory.createObjectBuilder()
+                    .add("code", pc.getCode())
+                    .add("town", pc.getTown())
+                    .add("gpsCoords", pc.getGpsCoords());
+
+            Response response = client.add(
+                    pcJson.build().toString());
+            StringBuilder sb = new StringBuilder();
+            sb.append("Status Code = ").append(response.getStatus()).append(
+                    " / ");
+
+            if (!response.hasEntity()) {
+                sb.append("NO ENTITY");
+            } else {
+                String msg = response.readEntity(String.class);
+                sb.append(msg);
+            }
+
+            System.out.println("Response from add service : " + sb.toString());
+            assert !Status.fromStatusCode(response.getStatus()).
+                    equals(Status.CONFLICT);
+        }
         client.close();
     }
 
@@ -112,9 +132,9 @@ public class NewJerseyClientTest {
     public void testCount() {
         System.out.println("count");
         NewJerseyClient client = new NewJerseyClient();
-        String count = client.count();
-        assert EXPECTED_COUNT.equals(count);
-        System.out.println("Total Count is correct");
+        int count = Integer.parseInt(client.count());
+        assert EXPECTED_COUNT <= count;
+        System.out.println("Total Count : " + count);
         client.close();
     }
 
@@ -151,8 +171,8 @@ public class NewJerseyClientTest {
 
         JsonArray array = reader.readArray();
 
-        assert array.size() == Integer.parseInt(EXPECTED_COUNT);
-        System.out.println("We've got " + EXPECTED_COUNT
+        assert array.size() >= EXPECTED_COUNT;
+        System.out.println("We've got " + array.size()
                 + " postal codes from findAll service");
 
         client.close();

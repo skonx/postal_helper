@@ -7,14 +7,13 @@ package fr.trendev.postalhelper.web.restapi;
 
 import fr.trendev.postalhelper.ejbsessions.PostalCodeFRFacade;
 import fr.trendev.postalhelper.entities.PostalCodeFR;
+import fr.trendev.postalhelper.exceptions.utils.ExceptionHelper;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.json.Json;
-import javax.json.JsonBuilderFactory;
-import javax.json.JsonObjectBuilder;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -42,12 +41,12 @@ public class PostalCodeService {
     private static final Logger LOG = Logger.getLogger(PostalCodeService.class.
             getName());
 
-    private Response sendNotFoundResponse(String path, String value) {
-        JsonBuilderFactory factory = Json.createBuilderFactory(null);
-        JsonObjectBuilder entity = factory.createObjectBuilder()
-                .add(path, value);
+    private Response sendNotFoundResponse() {
+
         return Response.status(Status.NOT_FOUND)
-                .entity(entity.build())
+                .entity(new GenericEntity<List<PostalCodeFR>>(
+                        Collections.emptyList()) {
+                })
                 .build();
     }
 
@@ -59,7 +58,7 @@ public class PostalCodeService {
 
         if (code.length() > 5) {
             LOG.log(Level.WARNING, "The code is too long...");
-            return sendNotFoundResponse("code", code);
+            return sendNotFoundResponse();
         }
 
         List<PostalCodeFR> list;
@@ -71,7 +70,7 @@ public class PostalCodeService {
         }
 
         if (list.isEmpty()) {
-            return sendNotFoundResponse("code", code);
+            return sendNotFoundResponse();
         }
 
         GenericEntity<List<PostalCodeFR>> entity = new GenericEntity<List<PostalCodeFR>>(
@@ -90,7 +89,7 @@ public class PostalCodeService {
 
         List<PostalCodeFR> list = facade.findFromTown(town);
         if (list.isEmpty()) {
-            return sendNotFoundResponse("town", town);
+            return sendNotFoundResponse();
         }
 
         GenericEntity<List<PostalCodeFR>> entity = new GenericEntity<List<PostalCodeFR>>(
@@ -117,8 +116,33 @@ public class PostalCodeService {
     @POST
     @Path("add")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void add(PostalCodeFR entity) {
-        LOG.log(Level.INFO, "Adding a postal code : {0}", entity.getCode());
-        facade.persist(entity);
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response add(PostalCodeFR entity) {
+        LOG.log(Level.INFO, "Adding a postal code : {0} / {1}", new Object[]{
+            entity.getCode(), entity.getTown()});
+        try {
+            if (facade.find(entity) == null) {
+                facade.persist(entity);
+                return Response.status(Status.CREATED).entity(entity.getCode()
+                        + ";"
+                        + entity.getTown()).build();
+            }
+        } catch (Exception ex) {
+            LOG.
+                    log(Level.WARNING,
+                            "Exception occurs adding a postal code : {0} / {1}",
+                            new Object[]{
+                                entity.getCode(), entity.getTown()});
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(
+                    ExceptionHelper.
+                            findRootCauseException(ex).getClass().
+                            toString()).
+                    build();
+        }
+        LOG.log(Level.WARNING, "Postal code {0} / {1} already present",
+                new Object[]{
+                    entity.getCode(), entity.getTown()});
+        return Response.status(Status.CONFLICT).
+                build();
     }
 }

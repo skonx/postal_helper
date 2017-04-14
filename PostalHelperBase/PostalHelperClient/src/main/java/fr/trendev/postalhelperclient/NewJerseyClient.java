@@ -6,6 +6,7 @@
 package fr.trendev.postalhelperclient;
 
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
 
 /**
  * Jersey REST client generated for REST resource:PostalCodeService [fr]<br>
@@ -30,10 +31,10 @@ public class NewJerseyClient {
         webTarget = client.target(BASE_URI).path("fr");
     }
 
-    public void add(Object requestEntity) throws
+    public Response add(Object requestEntity) throws
             javax.ws.rs.ClientErrorException {
-        webTarget.path("add").
-                request(javax.ws.rs.core.MediaType.APPLICATION_JSON).
+        return webTarget.path("add").
+                request(javax.ws.rs.core.MediaType.TEXT_PLAIN).
                 post(javax.ws.rs.client.Entity.entity(requestEntity,
                         javax.ws.rs.core.MediaType.APPLICATION_JSON));
     }
