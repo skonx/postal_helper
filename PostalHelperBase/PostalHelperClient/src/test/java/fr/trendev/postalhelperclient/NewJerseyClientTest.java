@@ -54,8 +54,8 @@ public class NewJerseyClientTest {
         NewJerseyClient client = new NewJerseyClient();
 
         PostalCodeFR pc = new PostalCodeFR();
-        pc.setCode("77" + System.currentTimeMillis());
-        pc.setTown("SOMEWHERE IN FRANCE");
+        pc.setCode("99999");
+        pc.setTown("SOMEWHERE IN FRANCE " + System.currentTimeMillis());
         pc.setGpsCoords("Latitude, Longitude");
 
         JsonBuilderFactory factory = Json.createBuilderFactory(null);
