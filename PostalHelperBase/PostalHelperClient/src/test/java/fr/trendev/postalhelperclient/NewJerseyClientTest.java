@@ -7,11 +7,13 @@ package fr.trendev.postalhelperclient;
 
 import fr.trendev.postalhelper.entities.PostalCodeFR;
 import java.io.InputStream;
+import java.util.List;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonBuilderFactory;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import org.junit.After;
@@ -165,16 +167,16 @@ public class NewJerseyClientTest {
     public void testFindAll() {
         System.out.println("findAll");
         NewJerseyClient client = new NewJerseyClient();
-        InputStream input = client.findAll(InputStream.class);
 
-        JsonReader reader = Json.createReader(input);
+        Response response = client.findAll(Response.class);
+        assert Status.fromStatusCode(response.getStatus()).equals(Status.OK);
 
-        JsonArray array = reader.readArray();
-
-        assert array.size() >= EXPECTED_COUNT;
-        System.out.println("We've got " + array.size()
+        List<PostalCodeFR> list = response.readEntity(
+                new GenericType<List<PostalCodeFR>>() {
+        });
+        assert list.size() >= EXPECTED_COUNT;
+        System.out.println("We've got " + list.size()
                 + " postal codes from findAll service");
-
         client.close();
     }
 

@@ -73,11 +73,10 @@ public class PostalCodeService {
             return sendNotFoundResponse();
         }
 
-        GenericEntity<List<PostalCodeFR>> entity = new GenericEntity<List<PostalCodeFR>>(
-                list) {
-        };
         return Response.status(Status.OK)
-                .entity(entity)
+                .entity(new GenericEntity<List<PostalCodeFR>>(
+                        list) {
+                })
                 .build();
     }
 
@@ -92,18 +91,34 @@ public class PostalCodeService {
             return sendNotFoundResponse();
         }
 
-        GenericEntity<List<PostalCodeFR>> entity = new GenericEntity<List<PostalCodeFR>>(
-                list) {
-        };
         return Response.status(Status.OK)
-                .entity(entity)
+                .entity(new GenericEntity<List<PostalCodeFR>>(
+                        list) {
+                })
                 .build();
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<PostalCodeFR> findAll() {
-        return facade.findAll();
+    public Response findAll() {
+
+        try {
+            List<PostalCodeFR> list = facade.findAll();
+
+            return Response.status(Status.OK).entity(
+                    new GenericEntity<List<PostalCodeFR>>(
+                            list) {
+            }).build();
+        } catch (Exception ex) {
+            LOG.
+                    log(Level.WARNING,
+                            "Exception occurs providing the entire postal code list...");
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(
+                    ExceptionHelper.
+                            findRootCauseException(ex).getClass().
+                            toString()).
+                    build();
+        }
     }
 
     @GET
