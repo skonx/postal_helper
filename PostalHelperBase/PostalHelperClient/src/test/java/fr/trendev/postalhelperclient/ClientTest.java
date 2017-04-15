@@ -7,9 +7,6 @@ package fr.trendev.postalhelperclient;
 
 import fr.trendev.postalhelper.entities.PostalCodeFR;
 import java.util.List;
-import javax.json.Json;
-import javax.json.JsonBuilderFactory;
-import javax.json.JsonObjectBuilder;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -63,14 +60,7 @@ public class ClientTest {
             pc.setTown("TOWN_" + i + "_" + System.currentTimeMillis());
             pc.setGpsCoords("Latitude, Longitude");
 
-            JsonBuilderFactory factory = Json.createBuilderFactory(null);
-            JsonObjectBuilder pcJson = factory.createObjectBuilder()
-                    .add("code", pc.getCode())
-                    .add("town", pc.getTown())
-                    .add("gpsCoords", pc.getGpsCoords());
-
-            Response response = client.add(
-                    pcJson.build().toString());
+            Response response = client.add(pc);
             StringBuilder sb = new StringBuilder();
             sb.append("Status Code = ").append(response.getStatus()).append(
                     " / ");
@@ -86,6 +76,41 @@ public class ClientTest {
             assert !Status.fromStatusCode(response.getStatus()).
                     equals(Status.CONFLICT);
         }
+        client.close();
+    }
+
+    @Test
+    public void testConstraintsAdd() {
+        System.out.println("add with Constraint Violation");
+        Client client = new Client();
+
+        PostalCodeFR pc = new PostalCodeFR(null, "BIKINI BOTTOM");
+        pc.setGpsCoords("Latitude, Longitude");
+
+        Response response = client.add(pc);
+        StringBuilder sb = new StringBuilder();
+        sb.append("Status Code = ").append(response.getStatus()).append(
+                " / ");
+
+        if (!response.hasEntity()) {
+            sb.append("NO ENTITY");
+        } else {
+            String msg = response.readEntity(String.class);
+            sb.append(msg);
+        }
+
+        System.out.println("Response from add service : " + sb.toString());
+
+        assert !Status.fromStatusCode(response.
+                getStatus()).
+                equals(Status.CREATED);
+        assert !Status.fromStatusCode(response.getStatus()).
+                equals(Status.CONFLICT);
+        assert Status.fromStatusCode(response.
+                getStatus()).
+                equals(Status.EXPECTATION_FAILED);
+
+        System.out.println("==> HTTP Code = " + response.getStatus());
         client.close();
     }
 

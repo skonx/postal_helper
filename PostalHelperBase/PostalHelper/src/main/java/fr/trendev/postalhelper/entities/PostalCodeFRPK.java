@@ -50,9 +50,9 @@ public class PostalCodeFRPK implements Serializable {
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 97 * hash + (this.getCode() != null ? this.getCode().hashCode() : 0);
-        hash = 97 * hash + (this.getTown() != null ? this.getTown().hashCode() : 0);
+        int hash = 3;
+        hash = 43 * hash + (this.getCode() != null ? this.getCode().hashCode() : 0);
+        hash = 43 * hash + (this.getTown() != null ? this.getTown().hashCode() : 0);
         return hash;
     }
 

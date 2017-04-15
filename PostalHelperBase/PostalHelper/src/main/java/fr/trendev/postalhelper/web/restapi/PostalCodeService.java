@@ -8,6 +8,7 @@ package fr.trendev.postalhelper.web.restapi;
 import fr.trendev.postalhelper.ejbsessions.PostalCodeFRFacade;
 import fr.trendev.postalhelper.entities.PostalCodeFR;
 import fr.trendev.postalhelper.exceptions.utils.ExceptionHelper;
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -169,7 +170,7 @@ public class PostalCodeService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
     public Response add(PostalCodeFR entity) {
-        LOG.log(Level.INFO, "Adding a postal code : {0} / {1}", new Object[]{
+        LOG.log(Level.INFO, "Adding postal code : {0} / {1}", new Object[]{
             entity.getCode(), entity.getTown()});
         try {
             if (facade.find(entity) == null) {
@@ -179,18 +180,22 @@ public class PostalCodeService {
                         + entity.getTown()).build();
             }
         } catch (Exception ex) {
+            Throwable t = ExceptionHelper.
+                    findRootCauseException(ex);
+
+            String msg = MessageFormat.format(
+                    "Exception occurs adding postal code [{0}/{1}] : {2} ; {3}",
+                    new Object[]{
+                        entity.getCode(), entity.getTown(), t.getClass().
+                        toString(), t.getMessage()});
+
             LOG.
-                    log(Level.WARNING,
-                            "Exception occurs adding a postal code : {0} / {1}",
-                            new Object[]{
-                                entity.getCode(), entity.getTown()});
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(
-                    ExceptionHelper.
-                            findRootCauseException(ex).getClass().
-                            toString()).
+                    log(Level.WARNING, msg);
+            return Response.status(Status.EXPECTATION_FAILED).entity(
+                    msg).
                     build();
         }
-        LOG.log(Level.WARNING, "Postal code {0} / {1} already present",
+        LOG.log(Level.WARNING, "Postal code [{0}/{1}] already present",
                 new Object[]{
                     entity.getCode(), entity.getTown()});
         return Response.status(Status.CONFLICT).
