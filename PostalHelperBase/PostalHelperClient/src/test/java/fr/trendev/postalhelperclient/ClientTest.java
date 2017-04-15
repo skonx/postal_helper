@@ -282,7 +282,7 @@ public class ClientTest {
         assert !deletedList.isEmpty();
         assert deletedList.size() == list.size();
 
-        response = client.findFromCode(Response.class, code);
+        response = client.delete(Response.class, code);
 
         assert Status.fromStatusCode(response.getStatus()).equals(
                 Status.NOT_FOUND);
