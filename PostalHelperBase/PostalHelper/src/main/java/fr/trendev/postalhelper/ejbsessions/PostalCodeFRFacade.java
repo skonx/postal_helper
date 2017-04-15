@@ -14,8 +14,10 @@ import java.util.logging.Logger;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
@@ -56,7 +58,7 @@ public class PostalCodeFRFacade {
      *
      * @param pc a postal code
      */
-    public void persist(PostalCodeFR pc) {
+    public void create(PostalCodeFR pc) {
         em.persist(pc);
         //em.flush();
     }
@@ -144,6 +146,18 @@ public class PostalCodeFRFacade {
         );
         em.remove(pc);
         //em.flush();
+    }
+
+    public int delete(String code) {
+        LOG.log(Level.INFO,
+                "Bulk Operation - Deleting postal code [{0}]", code);
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaDelete<PostalCodeFR> cd = cb.createCriteriaDelete(
+                PostalCodeFR.class);
+        Root<PostalCodeFR> root = cd.from(PostalCodeFR.class);
+        cd.where(cb.like(root.get(PostalCodeFR_.code), code + "%"));
+        Query q = em.createQuery(cd);
+        return q.executeUpdate();
     }
 
 }

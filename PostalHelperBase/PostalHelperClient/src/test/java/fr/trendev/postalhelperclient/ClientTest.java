@@ -173,7 +173,7 @@ public class ClientTest {
 
         testFindFromTownRoutine(client, "Paris", Status.OK, 31);
         testFindFromTownRoutine(client, "Julien", Status.OK, 107);
-        testFindFromTownRoutine(client, "city", Status.NOT_FOUND, 0);
+        testFindFromTownRoutine(client, "BIKINI BOTTOM", Status.NOT_FOUND, 0);
         testFindFromTownRoutine(client, "Bussy", Status.OK, 19);
 
         client.close();
@@ -294,7 +294,6 @@ public class ClientTest {
         assert list.isEmpty();
 
         System.out.println("Deletion is successful");
-
         client.close();
     }
 

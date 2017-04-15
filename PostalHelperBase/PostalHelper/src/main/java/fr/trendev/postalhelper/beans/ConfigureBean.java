@@ -40,14 +40,14 @@ public class ConfigureBean {
 
     /**
      * Will store the collected postal codes into the DB. COMMENT em.flush() IN
-     * facade::persist IN ORDER TO IMPROVE THE PERFORMANCES!!! DO NOT FORGET TO
-     * CHANGE javax.persistence.schema-generation.database.action VALUE TO
-     * drop-and-create
+ facade::create IN ORDER TO IMPROVE THE PERFORMANCES!!! DO NOT FORGET TO
+ CHANGE javax.persistence.schema-generation.database.action VALUE TO
+ drop-and-create
      */
     //@PostConstruct
     public void init() {
         //will persiste each PostalCode
-        getPostalCodes(";").forEach(facade::persist);
+        getPostalCodes(";").forEach(facade::create);
     }
 
     /**

@@ -198,7 +198,7 @@ public class PostalCodeService {
             entity.getCode(), entity.getTown()});
         try {
             if (facade.find(entity) == null) {
-                facade.persist(entity);
+                facade.create(entity);
                 return Response.status(Status.CREATED).entity(entity.getCode()
                         + ";"
                         + entity.getTown()).build();
@@ -250,9 +250,23 @@ public class PostalCodeService {
                 }).build();
             }
             LOG.log(Level.INFO, "{0} Postal Codes to delete", list.size());
-            list.stream().forEach(pc -> facade.delete(pc));
-            LOG.log(Level.INFO, "{0} Postal Codes successfully deleted", list.
-                    size());
+
+            int result = facade.delete(code);
+
+            if (result == list.size()) {
+                LOG.log(Level.INFO, "{0} Postal Codes successfully deleted",
+                        list.
+                                size());
+
+            } else {
+                String msg = MessageFormat.format(
+                        "Deleting Postal Codes from code [{0}] ; Found / Deleted = {1} / {2}",
+                        new Object[]{code,
+                            list.size(), result});
+
+                LOG.
+                        log(Level.WARNING, msg);
+            }
             return Response.status(Status.OK)
                     .entity(new GenericEntity<List<PostalCodeFR>>(list) {
                     }).build();
