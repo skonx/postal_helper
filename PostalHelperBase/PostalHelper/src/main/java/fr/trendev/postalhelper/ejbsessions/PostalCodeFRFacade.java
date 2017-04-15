@@ -12,13 +12,20 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.Stateless;
+import javax.json.Json;
+import javax.json.JsonArrayBuilder;
+import javax.json.JsonBuilderFactory;
+import javax.json.JsonObjectBuilder;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
 
 /**
@@ -158,6 +165,37 @@ public class PostalCodeFRFacade {
         cd.where(cb.like(root.get(PostalCodeFR_.code), code + "%"));
         Query q = em.createQuery(cd);
         return q.executeUpdate();
+    }
+
+    public String groupTownsByCode() {
+        LOG.log(Level.INFO, "Grouping towns by code");
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Tuple> cq = cb.createTupleQuery();
+        Root<PostalCodeFR> root = cq.from(PostalCodeFR.class);
+
+        Path<String> code = root.get(PostalCodeFR_.code);
+        Expression<Long> nb = cb.count(root.get(PostalCodeFR_.town));
+
+        cq.multiselect(code.alias("code"), nb.alias("nb"));
+        cq.groupBy(code);
+        cq.orderBy(cb.asc(nb), cb.asc(code));
+
+        List<Tuple> result = em.createQuery(cq).getResultList();
+
+        JsonBuilderFactory factory = Json.createBuilderFactory(null);
+        JsonArrayBuilder jsonArray = factory.createArrayBuilder();
+
+        //t.get(e.getAlias()).toString()
+        result.forEach(t -> {
+            JsonObjectBuilder jsonObj = factory.createObjectBuilder();
+            t.getElements().forEach(e ->
+                    jsonObj.add(
+                            e.getAlias(),
+                            String.valueOf(t.get(e.getAlias())))
+            );
+            jsonArray.add(jsonObj);
+        });
+        return jsonArray.build().toString();
     }
 
 }

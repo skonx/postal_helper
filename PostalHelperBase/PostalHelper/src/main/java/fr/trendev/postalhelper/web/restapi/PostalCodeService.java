@@ -287,4 +287,11 @@ public class PostalCodeService {
                     build();
         }
     }
+
+    @GET
+    @Path("grpcode")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response groupByCode() {
+        return Response.ok(facade.groupTownsByCode()).build();
+    }
 }
