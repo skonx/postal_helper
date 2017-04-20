@@ -46,8 +46,8 @@ public class ConfigureBean {
      */
     //@PostConstruct
     public void init() {
-        //will persiste each PostalCode
-        getPostalCodes(";").forEach(facade::create);
+        //will persist each PostalCode
+        this.getPostalCodes(";").forEach(facade::create);
     }
 
     /**
