@@ -13,8 +13,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -35,7 +35,7 @@ import javax.ws.rs.core.Response.Status;
 @Path("fr")
 public class PostalCodeService {
 
-    @EJB
+    @Inject
     private PostalCodeFRFacade facade;
 
     private final static int POSTALCODE_LENGTH = 5;
